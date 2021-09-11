@@ -3,7 +3,7 @@
     "description": "Collection object",
     "type": "library",
     "license": "proprietary",
-    "minimum-stability": "0.1.0",
+    "minimum-stability": "dev",
     "require": {},
     "require-dev": {
         "phpunit/phpunit": "9.5"
