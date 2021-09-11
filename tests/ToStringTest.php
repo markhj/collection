@@ -14,11 +14,9 @@ class ToStringTest extends TestCase
 	 */
 	public function basic(): void
 	{
-		$collection = (new Collection)->push(1, 2, 3);
-
 		$this->assertEquals(
 			json_encode([1, 2, 3]),
-			(string) $collection
+			(string) (new Collection)->push(1, 2, 3)
 		);
 	}
 }

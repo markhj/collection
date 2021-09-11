@@ -45,16 +45,7 @@ class RemoveTest extends TestCase
 	{
 		$this->expectNotToPerformAssertions();
 
-		$collection = $this->getMockBuilder(Collection::class)
-        	->disableOriginalConstructor()
-        	->getMock();
-
-    	$reflection = new ReflectionClass(Collection::class);
-    	$graceful = $reflection->getProperty('graceful');
-    	$graceful->setAccessible(true);
-    	$graceful->setValue($collection, true);
-
-		$collection->push(1, 2)->remove(3);
+		(new Collection)->graceful()->push(1, 2)->remove(3);
 	}
 
 	/**

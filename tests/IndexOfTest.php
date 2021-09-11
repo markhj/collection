@@ -48,18 +48,12 @@ class IndexOfTest extends TestCase
 	 */
 	public function notFoundGraceful(): void
 	{
-		$collection = (new Collection)->push(10, 20, 30, 20);
-
-		$collection = $this->getMockBuilder(get_class($collection))
-        	->disableOriginalConstructor()
-        	->getMock();
-
-    	$reflection = new ReflectionClass(Collection::class);
-    	$graceful = $reflection->getProperty('graceful');
-    	$graceful->setAccessible(true);
-    	$graceful->setValue($collection, true);
-
-		$this->assertNull($collection->indexOf(5));
+		$this->assertNull(
+			(new Collection)
+				->push(10, 20, 30, 20)
+				->graceful()
+				->indexOf(5)
+		);
 	}
 
 	/**

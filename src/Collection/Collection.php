@@ -8,6 +8,7 @@ use Markhj\Collection\Exceptions\KeyDoesNotExistException;
 use Markhj\Collection\Exceptions\ValueDoesNotExistException;
 use Markhj\Collection\Exceptions\InvalidItemTypeException;
 use Markhj\Collection\Exceptions\AssociativeModeMismatchException;
+use Markhj\Collection\Exceptions\OverlappingKeysException;
 use \Iterator;
 
 class Collection implements Iterator
@@ -689,6 +690,117 @@ class Collection implements Iterator
 		}
 
 		$this->collection = $new;
+
+		return $this;
+	}
+
+	/**
+	 * Add items before $key
+	 *
+	 * There's currently no support for graceful handling
+	 * of missing keys in this scenario
+	 * 
+	 * @param mixed $key
+	 * @param Collection $objects
+	 * @return Collection
+	 */
+	public function before($key, Collection $objects): Collection
+	{
+		return $this->beforeAfter($key, $objects, 0);
+	}
+
+	/**
+	 * Add items after $key
+	 *
+	 * There's currently no support for graceful handling
+	 * of missing keys in this scenario
+	 * 
+	 * @param mixed $key
+	 * @param Collection $objects
+	 * @return Collection
+	 */
+	public function after($key, Collection $objects): Collection
+	{
+		return $this->beforeAfter($key, $objects, 1);
+	}
+
+	/**
+	 * Set as graceful
+	 * 
+	 * @return Collection
+	 */
+	public function graceful(): Collection
+	{
+		$this->graceful = true;
+
+		return $this;
+	}
+
+	/**
+	 * Helper method to reduce boilerplate/overlapping code
+	 * between the before and after methods
+	 * 
+	 * @param mixed $key
+	 * @param Collection $objects
+	 * @param int $offset
+	 * @return Collection
+	 */
+	protected function beforeAfter(
+		$key,
+		Collection $objects,
+		int $offset = 0
+	): Collection
+	{
+		if ($this->isAssociative() xor $objects->isAssociative()) {
+			throw new AssociativeModeMismatchException;
+		}
+
+		if (!$this->keyExists($key)) {
+			throw new KeyDoesNotExistException;
+		}
+
+		if (
+			$this->isAssociative()
+			&& $objects->keys()->hasAnyOf(...$this->keys()->all())
+		) {
+			throw new OverlappingKeysException;
+		}
+
+		$index = $this->keys()->indexOf($key);
+		$target = $this->clone();
+
+		$this->empty();
+
+		$target
+			->clone()
+			->crop(0, $index + $offset)
+			->forEach(function($value, $key) {
+				if ($this->isAssociative()) {
+					$this->set($key, $value);
+				} else {
+					$this->push($value);
+				}
+			});
+
+		$objects
+			->forEach(function($value, $key) {
+				if ($this->isAssociative()) {
+					$this->set($key, $value);
+				} else {
+					$this->push($value);
+				}
+			});
+
+		$target
+			->clone()
+			->crop($index + $offset, $this->count())
+			->forEach(function($value, $key) {
+				if ($this->isAssociative()) {
+					$this->set($key, $value);
+				} else {
+					$this->push($value);
+				}
+			});
 
 		return $this;
 	}

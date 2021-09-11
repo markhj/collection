@@ -21,16 +21,7 @@ class GetTest extends TestCase
 		Collection $collection
 	): Collection
 	{
-		$collection = $this->getMockBuilder(get_class($collection))
-        	->disableOriginalConstructor()
-        	->getMock();
-
-    	$reflection = new ReflectionClass(Collection::class);
-    	$graceful = $reflection->getProperty('graceful');
-    	$graceful->setAccessible(true);
-    	$graceful->setValue($collection, true);
-
-    	return $collection;
+    	return $collection->graceful();
 	}
 
 	/**
