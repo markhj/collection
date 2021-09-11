@@ -153,4 +153,58 @@ class Collection
 	{
 		return count($this->collection);
 	}
+
+	/**
+	 * Reverse the collection
+	 * 
+	 * @return Collection
+	 */
+	public function reverse(): Collection
+	{
+		$this->collection = array_reverse($this->collection);
+
+		return $this;
+	}
+
+	/**
+	 * Carry out an action on every element of the collection
+	 * 
+	 * @param callable $handler
+	 * @return Collection
+	 */
+	public function forEach(callable $handler): Collection
+	{
+		foreach ($this->collection as &$item) {
+			$item = $handler($item);
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Filter elements according to the handler
+	 * 
+	 * @param callable $handler
+	 * @return Collection
+	 */
+	public function filter(callable $handler): Collection
+	{
+		$result = [];
+
+		foreach ($this->collection as $i => $item) {
+			if (!$handler($item, $i)) {
+				continue;
+			}
+			
+			if ($this->isAssociative()) {
+				$result[$i] = $item;
+			} else {
+				$result[] = $item;
+			}
+		}
+
+		$this->collection = $result;
+
+		return $this;
+	}
 }
