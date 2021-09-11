@@ -222,4 +222,15 @@ class Collection
 
 		return $this;
 	}
+
+	/**
+	 * Retrieve a Collection containing the keys of the
+	 * collection
+	 * 
+	 * @return Collection
+	 */
+	public function keys(): Collection
+	{
+		return (new Collection)->push(...array_keys($this->collection));
+	}
 }
