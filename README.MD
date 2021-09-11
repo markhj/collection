@@ -31,7 +31,12 @@ public function get($key);
 public function all(): array;
 public function count(): int;
 public function reverse(): Collection;
+public function keys(): Collection;
+public function toJson(): string;
 ```
+
+# Typecasting
+When you typecast the collection to string, it will return the JSON structure of the collection.
 
 # Example use of other methods
 ## map

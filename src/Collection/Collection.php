@@ -36,6 +36,16 @@ class Collection
 	protected $graceful = false;
 
 	/**
+	 * Type-cast to string (JSON)
+	 * 
+	 * @return string
+	 */
+	public function __toString(): string
+	{
+		return $this->toJson();
+	}
+
+	/**
 	 * Returns true if the collection instance is 
 	 * in associative mode
 	 * 
@@ -232,5 +242,15 @@ class Collection
 	public function keys(): Collection
 	{
 		return (new Collection)->push(...array_keys($this->collection));
+	}
+
+	/**
+	 * Convert the collection to JSON
+	 * 
+	 * @return string
+	 */
+	public function toJson(): string
+	{
+		return json_encode($this->collection);
 	}
 }
