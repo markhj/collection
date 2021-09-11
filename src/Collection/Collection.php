@@ -125,7 +125,7 @@ class Collection implements Iterator
 	 * 
 	 * @return bool
 	 */
-	protected function isGraceful(): bool
+	public function isGraceful(): bool
 	{
 		return $this->graceful;
 	}

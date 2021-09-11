@@ -23,7 +23,7 @@ $collection->map(function($item) {
 var_dump($collection->all()); // John Doe, Jane Doe
 ```
 
-# Basic methods
+# Methods
 ```php
 public function push(...$objects): Collection;
 public function set($key, $object): Collection;
@@ -31,10 +31,13 @@ public function get($key);
 public function keyExists($key): bool;
 public function all(): array;
 public function count(): int;
+public function empty(): Collection;
 public function reverse(): Collection;
 public function keys(): Collection;
 public function toJson(): string;
 public function indexOf($item): ?int;
+public function first();
+public function last();
 public function clone(): Collection;
 public function append(Collection $collection): Collection;
 public function prepend(Collection $collection): Collection;
@@ -43,7 +46,19 @@ public function limit(int $limit): Collection;
 public function has($item): bool;
 public function hasAllOf(...$items): bool;
 public function hasAnyOf(...$items): bool;
+public function map(callable $handler): Collection;
+public function filter(callable $handler): Collection;
+public function forEach(callable $handler): Collection;
+public function retrieve(callable $filter): Collection;
+public function merge(Collection $target): Collection;
+public function mergePreserving(Collection $target): Collection;
+public function append(Collection $collection): Collection;
+public function prepend(Collection $collection): Collection;
+public function isAssociative(): bool;
+public function isGraceful(): bool;
 ```
+
+There are examples of some of the methods further down.
 
 # Associative collection
 Associative collections provide all the same functionality as the non-associative, but uses key/value pairing similar to PHP's associative arrays.
@@ -52,6 +67,10 @@ Associative collections provide all the same functionality as the non-associativ
 $collection = new AssociativeCollection;
 $collection->add('order', $order);
 $collection->add('customer', $customer);
+
+// ...
+
+$collection->get('customer'); // Returns the customer
 ````
 
 # Language features
@@ -68,7 +87,7 @@ foreach ($collection as $key => $value) {
 
 # Example use of other methods
 ## map
-The map method iterates over every element of the collection, and assigns the returned value of the handler to the element in the collection.
+The ````map```` method iterates over every element of the collection, and assigns the returned value of the handler to the element in the collection.
 ````php
 $collection = (new Collection)
 	->push(1, 2, 3)
@@ -79,7 +98,7 @@ $collection = (new Collection)
 // 2, 4, 6
 ````
 ## forEach
-The forEach method is in many ways similar to the map method, but it will not assign the returned value to the element in the collection.
+The ````forEach```` method is in many ways similar to the map method, but it will not assign the returned value to the element in the collection.
 Instead you can carry out actions which aren't directly related to the collection itself.
 ````php
 $sum = 0;
@@ -147,12 +166,21 @@ $collection->hasAllOf(2, 8); // false
 ## merge
 With the ````merge```` method you can merge another collection into the current.
 ````php
-$collection = (new Collection)->push(1, 2, 3);
-$collection->hasAllOf(2, 3); // true
-$collection->hasAllOf(2, 8); // false
+$a = (new Collection)->push(1, 2, 3);
+$b = (new Collection)->push(1, 10, 20, 40);
+
+$a->merge($b); // 1, 10, 20, 40
 ````
 
 You can use the ````mergePreserving```` to protect the values of the existing collection.
+````php
+$a = (new Collection)->push(1, 2, 3);
+$b = (new Collection)->push(1, 10, 20, 40);
+
+$a->mergePreserving($b); // 1, 2, 3, 40
+````
+
+These methods are closely related to ````append```` and ````prepend````.
 
 # Inheritance
 You can use the "out of the box" collection objects provied in the package, but in many instances it makes sense to write custom collections which inherit the Collection. This allows you to expand with relevant methods.
