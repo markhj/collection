@@ -6,6 +6,7 @@ use Markhj\Collection\Exceptions\IsAssociativeModeException;
 use Markhj\Collection\Exceptions\NotAssociativeModeException;
 use Markhj\Collection\Exceptions\KeyDoesNotExistException;
 use Markhj\Collection\Exceptions\ValueDoesNotExistException;
+use Markhj\Collection\Exceptions\InvalidItemTypeException;
 use \Iterator;
 
 class Collection implements Iterator
@@ -165,6 +166,8 @@ class Collection implements Iterator
 		$this->requireNonAssociativeMode();
 
 		foreach ($objects as $object) {
+			$this->validateAdd($object);
+
 			$this->collection[] = $object;
 		}
 
@@ -213,10 +216,25 @@ class Collection implements Iterator
 	public function set($key, $object): Collection
 	{
 		$this->requireAssociativeMode();
+		$this->validateAdd($object);
 
 		$this->collection[$key] = $object;
 
 		return $this;
+	}
+
+	/**
+	 * Validate if the $object can be added
+	 * 
+	 * @param mixed $object
+	 * @throws InvalidItemTypeException
+	 * @return void
+	 */
+	protected function validateAdd($object): void
+	{
+		if (!$this->validate($object)) {
+			throw new InvalidItemTypeException;
+		}
 	}
 
 	/**
@@ -509,5 +527,19 @@ class Collection implements Iterator
 		}
 
 		return false;
+	}
+
+	/**
+	 * Intended to be overridden
+	 *
+	 * This enables the developer to limit the type of items
+	 * added to the collection
+	 * 
+	 * @param mixed $item
+	 * @return bool
+	 */
+	public function validate($item): bool
+	{
+		return true;
 	}
 }

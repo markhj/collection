@@ -135,8 +135,32 @@ $collection->hasAllOf(2, 8); // false
 # Inheritance
 You can use the "out of the box" collection objects provied in the package, but in many instances it makes sense to write custom collections which inherit the Collection. This allows you to expand with relevant methods.
 
-For example, you can create a collection of date/time objects, where you add methods to retrieve the earliest and latest instances.
+## Validate
+When you create new collections you might want to restrict it to certain data types. For this, you can override the method
+```php
+public function validate($item): bool
+```
+By default this method always returns true - meaning it accepts any type.
 
+You can for example limit to strings:
+```php
+public function validate($item): bool
+{
+	return is_string($item);
+}
+```
+Or to certain class names:
+```php
+public function validate($item): bool
+{
+	return get_class($item) == '...';
+}
+```
+
+If a wrong data type is passed the ````InvalidItemTypeException```` is thrown.
+
+## Examples
+For example, you can create a collection of date/time objects, where you add methods to retrieve the earliest and latest instances.
 ```php
 class MyCustomDateCollection extends Collection
 {

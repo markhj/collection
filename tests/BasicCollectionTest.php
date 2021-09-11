@@ -3,7 +3,9 @@
 namespace Markhj\Collection\Tests;
 
 use Markhj\Collection\Collection;
+use Markhj\Collection\Exceptions\InvalidItemTypeException;
 use PHPUnit\Framework\TestCase;
+use \ReflectionClass;
 
 class BasicCollectionTest extends TestCase
 {
@@ -39,5 +41,22 @@ class BasicCollectionTest extends TestCase
 			[2, 5, 7],
 			$collection->all()
 		);
+	}
+
+	/**
+	 * @test
+	 * @return void
+	 */
+	public function invalidType(): void
+	{
+		$this->expectException(InvalidItemTypeException::class);
+
+		$collection = $this->getMockBuilder(Collection::class)
+			->onlyMethods(['validate'])
+			->getMock();
+
+		$collection->method('validate')->willReturn(false);
+		
+    	$collection->push(1);
 	}
 }
