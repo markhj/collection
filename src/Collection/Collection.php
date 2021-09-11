@@ -5,8 +5,10 @@ namespace Markhj\Collection;
 use Markhj\Collection\Exceptions\IsAssociativeModeException;
 use Markhj\Collection\Exceptions\NotAssociativeModeException;
 use Markhj\Collection\Exceptions\KeyDoesNotExistException;
+use Markhj\Collection\Exceptions\ValueDoesNotExistException;
+use \Iterator;
 
-class Collection
+class Collection implements Iterator
 {
 	/**
 	 * Internal container of objects
@@ -36,6 +38,13 @@ class Collection
 	protected $graceful = false;
 
 	/**
+	 * Iterator position
+	 * 
+	 * @var int
+	 */
+	protected $cursor = 0;
+
+	/**
 	 * Type-cast to string (JSON)
 	 * 
 	 * @return string
@@ -43,6 +52,58 @@ class Collection
 	public function __toString(): string
 	{
 		return $this->toJson();
+	}
+
+	/**
+	 * Rewind the iterator cursor
+	 * 
+	 * @return void
+	 */
+	public function rewind()
+	{
+		$this->cursor = 0;
+	}
+
+	/**
+	 * Current iterator value
+	 * 
+	 * @return mixed
+	 */
+	public function current()
+	{
+		return $this->get(
+			$this->keys()->get($this->cursor)
+		);
+	}
+
+	/**
+	 * Iterator, next element
+	 * 
+	 * @return void
+	 */
+	public function next()
+	{
+		$this->cursor++;
+	}
+
+	/**
+	 * Key iterator key
+	 * 
+	 * @return void
+	 */
+	public function key()
+	{
+		return $this->keys()->all()[$this->cursor] ?? null;
+	}
+
+	/**
+	 * Iterator, has value at position
+	 * 
+	 * @return void
+	 */
+	public function valid()
+	{
+		return isset($this->collection[$this->key()]);
 	}
 
 	/**
@@ -108,6 +169,38 @@ class Collection
 		}
 
 		return $this;
+	}
+
+	/**
+	 * Get the index of the item
+	 *
+	 * Returns null, if not found (and graceful is enabled)
+	 * If not graceful and nothing found, ValueDoesNotExistException
+	 * 	will be thrown
+	 * 	
+	 * If multiple instances of same element, return first found
+	 *
+	 * For associative collections:
+	 * This will not return the key, but the numeric index - similar
+	 * to as if it was array
+	 * 
+	 * @param mixed $item
+	 * @throws ValueDoesNotExistException
+	 * @return null|int
+	 */
+	public function indexOf($item): ?int
+	{
+		foreach (array_values($this->collection) as $i => $row) {
+			if ($row === $item) {
+				return $i;
+			}
+		}
+
+		if (!$this->isGraceful()) {
+			throw new ValueDoesNotExistException;
+		}
+
+		return null;
 	}
 
 	/**

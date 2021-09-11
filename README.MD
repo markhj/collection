@@ -33,10 +33,20 @@ public function count(): int;
 public function reverse(): Collection;
 public function keys(): Collection;
 public function toJson(): string;
+public function indexOf($item): ?int;
 ```
 
-# Typecasting
+# Language features
+## Typecasting
 When you typecast the collection to string, it will return the JSON structure of the collection.
+
+## Iteration
+You can use the ````foreach```` operator on the collection instance.
+```php
+foreach ($collection as $key => $value) {
+	// ...
+}
+```
 
 # Example use of other methods
 ## map
