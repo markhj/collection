@@ -36,6 +36,7 @@ public function reverse(): Collection;
 public function keys(): Collection;
 public function toJson(): string;
 public function indexOf($item): ?int;
+public function remove(...$keys): Collection;
 public function first();
 public function last();
 public function clone(): Collection;

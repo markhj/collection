@@ -654,4 +654,42 @@ class Collection implements Iterator
 
 		return $this;
 	}
+
+	/**
+	 * Remove specified keys
+	 * 
+	 * @param mixed $key
+	 * @return Collection
+	 */
+	public function remove(...$keys): Collection
+	{
+		$new = [];
+
+		(new Collection)
+			->push(...$keys)
+			->forEach(function($key) {
+				if (
+					!$this->isGraceful()
+					&& !$this->keyExists($key)
+				) {
+					throw new KeyDoesNotExistException;
+				}
+			});
+
+		foreach ($this->collection as $key => $value) {
+			if (in_array($key, $keys)) {
+				continue;
+			}
+
+			if ($this->isAssociative()) {
+				$new[$key] = $value;
+			} else {
+				$new[] = $value;
+			}
+		}
+
+		$this->collection = $new;
+
+		return $this;
+	}
 }
