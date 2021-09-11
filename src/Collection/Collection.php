@@ -270,4 +270,38 @@ class Collection
 	{
 		return json_encode($this->collection);
 	}
+
+	/**
+	 * Access the first element
+	 *
+	 * Returns null, if collection is empty
+	 *
+	 * @return mixed
+	 */
+	public function first()
+	{
+		if (!$this->count()) {
+			return null;
+		}
+
+		return $this->collection[$this->keys()->all()[0]];
+	}
+
+	/**
+	 * Access the last element
+	 *
+	 * Returns null, if collection is empty
+	 *
+	 * @return mixed
+	 */
+	public function last()
+	{
+		if (!$this->count()) {
+			return null;
+		}
+
+		$keys = $this->keys()->all();
+
+		return $this->collection[$keys[count($keys) - 1]];
+	}
 }
