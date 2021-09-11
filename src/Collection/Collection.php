@@ -7,6 +7,7 @@ use Markhj\Collection\Exceptions\NotAssociativeModeException;
 use Markhj\Collection\Exceptions\KeyDoesNotExistException;
 use Markhj\Collection\Exceptions\ValueDoesNotExistException;
 use Markhj\Collection\Exceptions\InvalidItemTypeException;
+use Markhj\Collection\Exceptions\AssociativeModeMismatchException;
 use \Iterator;
 
 class Collection implements Iterator
@@ -113,7 +114,7 @@ class Collection implements Iterator
 	 * 
 	 * @return bool
 	 */
-	protected function isAssociative(): bool
+	public function isAssociative(): bool
 	{
 		return $this->associative;
 	}
@@ -541,5 +542,116 @@ class Collection implements Iterator
 	public function validate($item): bool
 	{
 		return true;
+	}
+
+	/**
+	 * Merge another collection into this collection
+	 * 
+	 * @param Collection $target
+	 * @throws AssociativeModeMismatchException
+	 * @return Collection
+	 */
+	public function merge(Collection $target): Collection
+	{
+		if ($this->isAssociative() xor $target->isAssociative()) {
+			throw new AssociativeModeMismatchException;
+		}
+
+		foreach ($target->all() as $key => $value) {
+			$this->validateAdd($value);
+
+			$this->collection[$key] = $value;
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Merge another collection into this collection, where the
+	 * original collection is dominant in case of conflicts
+	 * 
+	 * @param Collection $target
+	 * @throws AssociativeModeMismatchException
+	 * @return Collection
+	 */
+	public function mergePreserving(Collection $target): Collection
+	{
+		if ($this->isAssociative() xor $target->isAssociative()) {
+			throw new AssociativeModeMismatchException;
+		}
+
+		foreach ($target->all() as $key => $value) {
+			$this->validateAdd($value);
+			
+			if (!isset($this->collection[$key])) {
+				$this->collection[$key] = $value;
+			}
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Returns true if key exists in collection
+	 * 
+	 * @param mixed $key
+	 * @return bool
+	 */
+	public function keyExists($key): bool
+	{
+		return $this->keys()->has($key);
+	}
+
+	/**
+	 * Append items to the end of the collection
+	 * 
+	 * @param Collection $collection
+	 * @return Collection
+	 */
+	public function append(Collection $collection): Collection
+	{
+		$this->requireNonAssociativeMode();
+
+		foreach ($collection as $item) {
+			$this->push($item);
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Append items to the end of the collection
+	 * 
+	 * @param Collection $collection
+	 * @return Collection
+	 */
+	public function prepend(Collection $collection): Collection
+	{
+		$this->requireNonAssociativeMode();
+
+		$container = $this->clone();
+
+		$this->empty();
+
+		foreach (array_merge(
+			$collection->all(),
+			$container->all()
+		) as $item) {
+			$this->push($item);
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Empty the collection
+	 * 
+	 * @return Collection
+	 */
+	public function empty(): Collection
+	{
+		$this->collection = [];
+
+		return $this;
 	}
 }

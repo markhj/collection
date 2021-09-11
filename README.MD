@@ -28,6 +28,7 @@ var_dump($collection->all()); // John Doe, Jane Doe
 public function push(...$objects): Collection;
 public function set($key, $object): Collection;
 public function get($key);
+public function keyExists($key): bool;
 public function all(): array;
 public function count(): int;
 public function reverse(): Collection;
@@ -35,12 +36,23 @@ public function keys(): Collection;
 public function toJson(): string;
 public function indexOf($item): ?int;
 public function clone(): Collection;
+public function append(Collection $collection): Collection;
+public function prepend(Collection $collection): Collection;
 public function crop(int $start, int $size): Collection;
 public function limit(int $limit): Collection;
 public function has($item): bool;
 public function hasAllOf(...$items): bool;
 public function hasAnyOf(...$items): bool;
 ```
+
+# Associative collection
+Associative collections provide all the same functionality as the non-associative, but uses key/value pairing similar to PHP's associative arrays.
+
+````php
+$collection = new AssociativeCollection;
+$collection->add('order', $order);
+$collection->add('customer', $customer);
+````
 
 # Language features
 ## Typecasting
@@ -126,6 +138,14 @@ $collection->hasAnyOf(8, 11); // false
 ````
 
 ## hasAllOf
+````php
+$collection = (new Collection)->push(1, 2, 3);
+$collection->hasAllOf(2, 3); // true
+$collection->hasAllOf(2, 8); // false
+````
+
+## merge
+With the ````merge```` method you can merge another collection into the current.
 ````php
 $collection = (new Collection)->push(1, 2, 3);
 $collection->hasAllOf(2, 3); // true
