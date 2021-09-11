@@ -34,6 +34,12 @@ public function reverse(): Collection;
 public function keys(): Collection;
 public function toJson(): string;
 public function indexOf($item): ?int;
+public function clone(): Collection;
+public function crop(int $start, int $size): Collection;
+public function limit(int $limit): Collection;
+public function has($item): bool;
+public function hasAllOf(...$items): bool;
+public function hasAnyOf(...$items): bool;
 ```
 
 # Language features
@@ -84,24 +90,69 @@ $collection = (new Collection)
 
 // 2, 5, 8
 ````
+## filter
+The ````filter```` method removes unwanted elements from the collection.
+````php
+$collection = (new Collection)
+	->push(8, 2, 5)
+	->filter(function($a) {
+		return $a != 2;
+	});
+
+// 8, 5
+````
+## retrieve
+The ````retrieve```` method creates a new (cloned) collection based on requested elements.
+This allows you to extract a filtered subset of elements, without affecting the original collection itself.
+````php
+$evenNumbers = $collection->retrieve(function($a) {
+	return $a % 2 == 0;
+});
+````
+## has
+The ````has```` method returns true if the target item is found in the collection.
+````php
+$collection = (new Collection)->push(1, 2, 3);
+$collection->has(1); // true
+$collection->has(8); // false
+````
+The ````has```` method can also compare objects.
+
+## hasAnyOf
+````php
+$collection = (new Collection)->push(1, 2, 3);
+$collection->hasAnyOf(2, 8); // true
+$collection->hasAnyOf(8, 11); // false
+````
+
+## hasAllOf
+````php
+$collection = (new Collection)->push(1, 2, 3);
+$collection->hasAllOf(2, 3); // true
+$collection->hasAllOf(2, 8); // false
+````
 
 # Inheritance
-You can use the "out of the box" collection objects provied in the package, but it's actually recommended to craete child collections which can provide handy methods.
+You can use the "out of the box" collection objects provied in the package, but in many instances it makes sense to write custom collections which inherit the Collection. This allows you to expand with relevant methods.
+
+For example, you can create a collection of date/time objects, where you add methods to retrieve the earliest and latest instances.
 
 ```php
 class MyCustomDateCollection extends Collection
 {
 	public function earliest()
 	{
-		// Custom method to return the earliest date in the collection
+		// ...
 	}
 
 	public function latest()
 	{
-		// Custom method to return the latest date in the collection
+		// ...
 	}
 }
 ```
+
+Another example would be a collection of payment methods, where you add methods relevant to your business logic. It could be a boolean method to indicate if there's a credit card among the payment methods.
 
 ```php
 class PaymentMethodCollection extends Collection

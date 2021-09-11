@@ -397,4 +397,117 @@ class Collection implements Iterator
 
 		return $this->collection[$keys[count($keys) - 1]];
 	}
+
+	/**
+	 * Make a clone of the collection
+	 * 
+	 * @return Collection
+	 */
+	public function clone(): Collection
+	{
+		$className = get_class($this);
+		if ($this->isAssociative()) {
+			$collection = new $className;
+			foreach ($this->collection as $key => $value) {
+				$collection->set($key, $value);
+			}
+			return $collection;
+		} else {
+			return (new $className)->push(...$this->all());
+		}
+	}
+
+	/**
+	 * Retrieve elements according to the $filter parameter
+	 * and put them in a cloned collection
+	 * 
+	 * @param callable $filter
+	 * @return Collection
+	 */
+	public function retrieve(callable $filter): Collection
+	{
+		return $this->clone()->filter($filter);
+	}
+
+	/**
+	 * Cap the maximum number of items
+	 * 
+	 * @param int $limit
+	 * @return Collection
+	 */
+	public function limit(int $limit): Collection
+	{
+		$this->crop(0, $limit);
+
+		return $this;
+	}
+
+	/**
+	 * Cap the maximum number of items
+	 * 
+	 * @param int $start
+	 * @param int $size
+	 * @return Collection
+	 */
+	public function crop(int $start, int $size): Collection
+	{
+		$this->collection = array_slice($this->collection, $start, $size);
+
+		return $this;
+	}
+
+	/**
+	 * Returns true if the element is found in the collection
+	 * 
+	 * @param mixed $element
+	 * @return bool
+	 */
+	public function has($element): bool
+	{
+		foreach ($this->collection as $item) {
+			if ($item === $element) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns true if all of the elements are found in the
+	 * collection
+	 * 
+	 * @param mixed $items
+	 * @return bool
+	 */
+	public function hasAllOf(...$items): bool
+	{
+		$found = [];
+
+		foreach ($items as $i => $item) {
+			if (!$this->has($item)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Returns true if any of the elements are found in the
+	 * collection
+	 * 
+	 * @param mixed $items
+	 * @return bool
+	 */
+	public function hasAnyOf(...$items): bool
+	{
+		foreach ($items as $item) {
+			if ($this->has($item)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }
