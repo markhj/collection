@@ -511,8 +511,6 @@ class Collection implements Iterator
 	 */
 	public function hasAllOf(...$items): bool
 	{
-		$found = [];
-
 		foreach ($items as $i => $item) {
 			if (!$this->has($item)) {
 				return false;
