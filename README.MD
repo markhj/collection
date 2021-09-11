@@ -27,6 +27,7 @@ var_dump($collection->all()); // John Doe, Jane Doe
 ```php
 public function push(...$objects): Collection;
 public function set($key, $object): Collection;
+public function add(Collection $collection): Collection;
 public function get($key);
 public function keyExists($key): bool;
 public function all(): array;
@@ -55,6 +56,8 @@ public function merge(Collection $target): Collection;
 public function mergePreserving(Collection $target): Collection;
 public function append(Collection $collection): Collection;
 public function prepend(Collection $collection): Collection;
+public function before($key, Collection $collection): Collection;
+public function after($key, Collection $collection): Collection;
 public function isAssociative(): bool;
 public function isGraceful(): bool;
 ```

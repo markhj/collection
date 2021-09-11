@@ -751,6 +751,52 @@ class Collection implements Iterator
 		int $offset = 0
 	): Collection
 	{
+		$this->beforeAfterValidate($key, $objects);
+
+		$index = $this->keys()->indexOf($key);
+		$target = $this->clone();
+
+		return $this
+			->empty()
+			->add($target->clone()->crop(0, $index + $offset))
+			->add($objects)
+			->add($target->clone()->crop($index + $offset, $this->count()));
+	}
+
+	/**
+	 * Will add the $collection to the this
+	 *
+	 * When adding associative array, overlapping keys will be
+	 * overwritten by $collection
+	 * 
+	 * @param Collection $target
+	 * @return Collection
+	 */
+	public function add(Collection $collection): Collection
+	{
+		$collection->forEach(function($value, $key) {
+			if ($this->isAssociative()) {
+				$this->set($key, $value);
+			} else {
+				$this->push($value);
+			}
+		});
+
+		return $this;
+	}
+
+	/**
+	 * Validate for before/after methods
+	 * 
+	 * @param mixed $key
+	 * @param Collection $objects
+	 * @return void
+	 */
+	protected function beforeAfterValidate(
+		$key,
+		Collection $objects
+	): void
+	{
 		if ($this->isAssociative() xor $objects->isAssociative()) {
 			throw new AssociativeModeMismatchException;
 		}
@@ -765,43 +811,5 @@ class Collection implements Iterator
 		) {
 			throw new OverlappingKeysException;
 		}
-
-		$index = $this->keys()->indexOf($key);
-		$target = $this->clone();
-
-		$this->empty();
-
-		$target
-			->clone()
-			->crop(0, $index + $offset)
-			->forEach(function($value, $key) {
-				if ($this->isAssociative()) {
-					$this->set($key, $value);
-				} else {
-					$this->push($value);
-				}
-			});
-
-		$objects
-			->forEach(function($value, $key) {
-				if ($this->isAssociative()) {
-					$this->set($key, $value);
-				} else {
-					$this->push($value);
-				}
-			});
-
-		$target
-			->clone()
-			->crop($index + $offset, $this->count())
-			->forEach(function($value, $key) {
-				if ($this->isAssociative()) {
-					$this->set($key, $value);
-				} else {
-					$this->push($value);
-				}
-			});
-
-		return $this;
 	}
 }
