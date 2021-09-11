@@ -16,7 +16,7 @@ use Markhj\Collection\Collection;
 $collection = new Collection;
 $collection->push('John', 'Jane');
 
-$collection->forEach(function($item) {
+$collection->map(function($item) {
 	return $item . ' Doe';
 });
 
@@ -34,15 +34,29 @@ public function reverse(): Collection;
 ```
 
 # Example use of other methods
-## forEach
+## map
+The map method iterates over every element of the collection, and assigns the returned value of the handler to the element in the collection.
 ````php
 $collection = (new Collection)
 	->push(1, 2, 3)
-	->forEach(function($item) {
+	->map(function($item, $key) {
 		return $item * 2;
 	});
 
 // 2, 4, 6
+````
+## forEach
+The forEach method is in many ways similar to the map method, but it will not assign the returned value to the element in the collection.
+Instead you can carry out actions which aren't directly related to the collection itself.
+````php
+$sum = 0;
+$collection = (new Collection)
+	->push(1, 2, 3)
+	->forEach(function($item, $key) use(&$sum) {
+		return $sum += $item;
+	});
+
+// $sum is 6
 ````
 
 # Inheritance

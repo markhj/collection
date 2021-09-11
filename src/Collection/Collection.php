@@ -167,15 +167,15 @@ class Collection
 	}
 
 	/**
-	 * Carry out an action on every element of the collection
+	 * Carry out a manipulation on every element of the collection
 	 * 
 	 * @param callable $handler
 	 * @return Collection
 	 */
-	public function forEach(callable $handler): Collection
+	public function map(callable $handler): Collection
 	{
-		foreach ($this->collection as &$item) {
-			$item = $handler($item);
+		foreach ($this->collection as $i => &$item) {
+			$item = $handler($item, $i);
 		}
 
 		return $this;
@@ -204,6 +204,21 @@ class Collection
 		}
 
 		$this->collection = $result;
+
+		return $this;
+	}
+
+	/**
+	 * Carry out an action on every element of the collection
+	 * 
+	 * @param callable $handler
+	 * @return Collection
+	 */
+	public function forEach(callable $handler): Collection
+	{
+		foreach ($this->collection as $i => &$item) {
+			$handler($item, $i);
+		}
 
 		return $this;
 	}

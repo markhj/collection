@@ -6,7 +6,7 @@ use Markhj\Collection\Collection;
 use Markhj\Collection\AssociativeCollection;
 use PHPUnit\Framework\TestCase;
 
-class ForEachTest extends TestCase
+class MapTest extends TestCase
 {
 	/**
 	 * @test
@@ -14,14 +14,16 @@ class ForEachTest extends TestCase
 	 */
 	public function basic(): void
 	{
-		$sum = 0;
 		$collection = (new Collection)
 			->push(1, 2, 3)
-			->forEach(function($item) use(&$sum) {
-				return $sum += $item;
+			->map(function($item) {
+				return $item * 2;
 			});
 
-		$this->assertEquals(6, $sum);
+		$this->assertEquals(
+			[2, 4, 6],
+			$collection->all()
+		);
 	}
 
 	/**
@@ -30,14 +32,19 @@ class ForEachTest extends TestCase
 	 */
 	public function associative(): void
 	{
-		$sum = 0;
 		$collection = (new AssociativeCollection)
 			->set('a', 10)
 			->set('b', 20)
-			->forEach(function($item) use(&$sum) {
-				return $sum += $item;
+			->map(function($item) {
+				return $item * 2;
 			});
 
-		$this->assertEquals(30, $sum);
+		$this->assertEquals(
+			[
+				'b' => 40,
+				'a' => 20,
+			],
+			$collection->all()
+		);
 	}
 }
