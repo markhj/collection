@@ -1,0 +1,5 @@
+#Directories
+vendor/
+
+# PHPUnit files
+.phpunit.result.cache
