@@ -152,6 +152,8 @@ $collection->hasAllOf(2, 3); // true
 $collection->hasAllOf(2, 8); // false
 ````
 
+You can use the ````mergePreserving```` to protect the values of the existing collection.
+
 # Inheritance
 You can use the "out of the box" collection objects provied in the package, but in many instances it makes sense to write custom collections which inherit the Collection. This allows you to expand with relevant methods.
 
