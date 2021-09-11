@@ -63,6 +63,17 @@ $collection = (new Collection)
 
 // $sum is 6
 ````
+## sort
+The ````sort```` method sorts the collection elements by a defined handler (callable)
+````php
+$collection = (new Collection)
+	->push(8, 2, 5)
+	->sort(function($a, $b) {
+		return $a > $b;
+	});
+
+// 2, 5, 8
+````
 
 # Inheritance
 You can use the "out of the box" collection objects provied in the package, but it's actually recommended to craete child collections which can provide handy methods.
@@ -91,3 +102,10 @@ class PaymentMethodCollection extends Collection
 	}
 }
 ```
+
+# Options
+## Graceful handling of missing keys
+When you're working on a class inheriting the Collection object, you can set the ````graceful```` property to true, to enable
+graceful handling of trying to access a collection element that doesn't exist. In normal circumstances, trying to access an element
+that doesn't exist will throw ````KeyDoesNotExistException````. If graceful handling is enabled and you try access a non-existent key
+````NULL```` will be returned.

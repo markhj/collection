@@ -234,6 +234,23 @@ class Collection
 	}
 
 	/**
+	 * Sort the collection according to the $handler
+	 * 
+	 * @param callable $handler
+	 * @return Collection
+	 */
+	public function sort(callable $handler): Collection
+	{
+		if ($this->isAssociative()) {
+			uasort($this->collection, $handler);
+		} else {
+			usort($this->collection, $handler);
+		}
+
+		return $this;
+	}
+
+	/**
 	 * Retrieve a Collection containing the keys of the
 	 * collection
 	 * 
