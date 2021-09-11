@@ -54,4 +54,20 @@ class CountTest extends TestCase
 				->count()
 		);
 	}
+
+	/**
+	 * @test
+	 * @return void
+	 */
+	public function where(): void
+	{
+		$this->assertEquals(
+			2,
+			(new Collection)
+				->push(1, 2, 3, 4, 5)
+				->count(function($value, $key) {
+					return $value % 2 == 0;
+				})
+		);
+	}
 }

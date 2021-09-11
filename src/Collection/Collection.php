@@ -269,11 +269,20 @@ class Collection implements Iterator
 
 	/**
 	 * Count the number of elements in the collection
-	 * 
+	 *
+	 * You can supply a $where to quickly count elements
+	 * fulfilling the filter
+	 *
+	 * @since v1.7.0 $filter parameter added
+	 * @param null|callable $filter
 	 * @return int
 	 */
-	public function count(): int
+	public function count(?callable $filter = null): int
 	{
+		if ($filter) {
+			return $this->clone()->filter($filter)->count();
+		}
+
 		return count($this->collection);
 	}
 

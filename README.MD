@@ -31,7 +31,7 @@ public function add(Collection $collection): Collection;
 public function get($key);
 public function keyExists($key): bool;
 public function all(): array;
-public function count(): int;
+public function count(?callable $filter = null): int;
 public function empty(): Collection;
 public function reverse(): Collection;
 public function keys(): Collection;
@@ -230,14 +230,30 @@ class MyCustomDateCollection extends Collection
 }
 ```
 
-Another example would be a collection of payment methods, where you add methods relevant to your business logic. It could be a boolean method to indicate if there's a credit card among the payment methods.
+Another example would be a collection of payment methods, where you add methods relevant to your business logic. It could be a boolean method to check for expired credit cards, a method to get all credit cards, or a method to retrieve default payment method.
 
 ```php
 class PaymentMethodCollection extends Collection
 {
-	public function hasCreditCard(): bool
+	public function hasExpiredCreditCard(): bool
 	{
-		// ...
+		// Pseudo/example code to find expired card
+		return $this->count(function($paymentMethod) {
+			return $paymentMethod->isExpired();
+		}) > 0;
+	}
+
+	public function getCreditCards(): Collection
+	{
+		return $this->retrieve(function($paymentMethod) {
+			// Logic to determine of $paymentMethod is a credit card
+			// or another type
+		});
+	}
+
+	public function getDefaultPaymentMethod(): ?PaymentMethod
+	{
+		// Find the default payment method
 	}
 }
 ```
