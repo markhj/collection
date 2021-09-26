@@ -306,7 +306,7 @@ class Collection implements Iterator
 	 */
 	public function map(callable $handler): Collection
 	{
-		foreach ($this->collection as $i => $item) {
+		foreach ($this->collection as $i => &$item) {
 			$item = $handler($item, $i);
 		}
 
