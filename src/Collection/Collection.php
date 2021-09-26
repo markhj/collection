@@ -348,7 +348,7 @@ class Collection implements Iterator
 	 */
 	public function forEach(callable $handler): Collection
 	{
-		foreach ($this->collection as $i => &$item) {
+		foreach ($this->collection as $i => $item) {
 			$handler($item, $i);
 		}
 
